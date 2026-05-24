@@ -1,0 +1,25 @@
+services:
+  db:
+    image: mysql:8.0.36
+    platform: linux/amd64
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: my_database
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+
+    ports:
+      - "3306:3306"
+
+    command: --secure-file-priv=/var/lib/mysql-files
+
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "user", "-ppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./titanic.csv:/var/lib/mysql-files/titanic.csv
